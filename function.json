@@ -1,0 +1,160 @@
+{
+  "type": "scalar.function",
+  "input_schema": {
+    "type": "object",
+    "description": "A single cat photograph to evaluate for technical visual clarity.",
+    "properties": {
+      "cat_photo": {
+        "type": "image",
+        "description": "A photograph of a cat to be evaluated for technical visual clarity, including its lighting, sharpness and focus, and freedom from noise and artifacts."
+      }
+    },
+    "required": [
+      "cat_photo"
+    ]
+  },
+  "tasks": [
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "$jmespath": "input.cat_photo"
+            },
+            {
+              "type": "text",
+              "text": "How is the lighting on the cat in this photograph? Is the cat illuminated well enough that you can clearly see its form, features, and textures?"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The cat is well-lit and clearly visible. Its form, features, and fur textures are all easy to see — the exposure is good and the lighting is sufficient."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The lighting is okay but not great. The cat is visible, though some areas are a bit dark or slightly washed out, making it harder to see all the details."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The lighting is poor. The cat is lost in shadow or blown out by overexposure — I can barely make out its form and features."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "I took this photo of my cat. Can you tell me whether the cat itself is sharp and in focus, or if it's blurry?"
+            },
+            {
+              "$jmespath": "input.cat_photo"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The cat is sharp and in focus. I can see crisp edges, fine detail in the fur, and clear definition in the eyes and ears. There's no motion blur or softness on the subject."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is somewhat soft. It's recognizable, but the edges aren't fully crisp — there's a bit of blur or the focus isn't quite locked on the cat, so some fine detail is lost."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The cat is blurry or out of focus. I can't make out clear details — the subject is a soft smear or the focal point has missed the cat entirely."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    },
+    {
+      "type": "vector.completion",
+      "skip": null,
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Can you check this cat photo for digital noise, grain, or compression artifacts? I want to know if the image is clean or if there's visual interference degrading the picture."
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "type": "text",
+              "text": "Sure, please share the photo and I'll examine it for noise and artifacts."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "text",
+              "text": "Here it is:"
+            },
+            {
+              "$jmespath": "input.cat_photo"
+            }
+          ]
+        }
+      ],
+      "responses": [
+        [
+          {
+            "type": "text",
+            "text": "The image is clean. I don't see significant noise, grain, or compression artifacts. The cat's fur and features are rendered smoothly and clearly without visual interference."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "There is some visible noise or minor compression artifacts in the image. The cat is still recognizable, but the grain or blockiness slightly detracts from the overall clarity."
+          }
+        ],
+        [
+          {
+            "type": "text",
+            "text": "The image is heavily degraded. There is substantial noise, grain, or compression artifacts throughout — the cat's details are obscured and the picture looks rough and unclear."
+          }
+        ]
+      ],
+      "output": {
+        "$starlark": "output[\"scores\"][0] * 1.0 + output[\"scores\"][1] * 0.5 + output[\"scores\"][2] * 0.0"
+      }
+    }
+  ],
+  "description": "Scores the technical visual clarity of a single cat photo on a 0-to-1 scale by evaluating three qualities: lighting, sharpness and focus, and freedom from noise and artifacts. High scores mean the cat is well-lit, crisp, and easy to see; low scores mean it is dark, blurry, or degraded. Excludes judgments about composition or aesthetics."
+}
