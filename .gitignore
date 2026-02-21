@@ -1,0 +1,13 @@
+# Ignore everything
+*
+
+# Allow specific files
+!.gitignore
+!parent.txt
+!parameters.json
+!function.json
+!INVENT_SPEC.md
+!INVENT_ESSAY.md
+!INVENT_ESSAY_TASKS.md
+!README.md
+!placeholder_task_specs.json
